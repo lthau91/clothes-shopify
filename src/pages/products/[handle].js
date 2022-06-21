@@ -6,8 +6,10 @@ function ProductDetails() {
     const router = useRouter()
     const { handle } = router.query
     console.log(handle)
-
-    let title = handle.split("-"); // split into array
+    let title = ["default", "whatever"]
+    if (handle !== undefined) {
+        title = handle.split("-"); // split into array
+    }
     console.log(title)
     let title2 = title.map((word) => { 
         const newWord = word[0].toUpperCase() + word.slice(1, word.length);
