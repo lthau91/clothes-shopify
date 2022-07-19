@@ -2,11 +2,15 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import Nav from '../components/Nav'
+import StoreHeading from '../components/StoreHeading'
 import ProductListings from '../components/ProductListings'
+import { getAllProductsInCollection } from '@/lib/shopify'
 import { products } from '../data/products'
 
 
-export default function Home() {
+export default function Home({ products }) {
+  // const { products } = props
+  // const products = props.products
   return (
     <div className={styles.container}>
       <Head>
@@ -16,23 +20,37 @@ export default function Home() {
       </Head>
       <Nav />
       <main className={styles.main}>
-        
+        <StoreHeading />
         <ProductListings products={products} />
 
       </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
     </div>
   )
 }
+
+// so, we need to invoke the function in lib/shopify.js
+// and we will do it here using getStaticProps
+// so we will declare a function getStaticProps and inside this function, we call
+// getAllProductsInCollection()
+// and getAllProductsInCollection() returns us 'products', which is a list (array)
+// and this products is being given to our Home() page component.
+// getStaticProps is a special function provided by NextJS
+// we can also use getServerSideProps and getStaticPaths
+export async function getStaticProps() {
+  const products = await getAllProductsInCollection()
+
+  // why is this return statement a nested dictionary?
+  // { key: { key-value } }
+  // { props: { products } } <-- this is modern javascript (es6)
+  // { props: { products: products } }
+  // why is the first key named as "props"?
+  // well, because NextJS as a framework makes that a convention
+  return {
+    props: {
+      products
+    },
+  }
+}
+
+// getStaticProps is a build-time code generator (pre-rendering)
+// getServerSideProps is a dynamic server side call
